@@ -3,16 +3,13 @@ console.log("hi");
 // Data Structures declared here
 var deck = [];
 var moveCount = 0;
-var tieCount = 0;
 
 var player1 = {
-  deck: [],
-  score: 0
+  deck: []
 };
 
 var player2 = {
-  deck: [],
-  score: 0
+  deck: []
 };
 
 var initializeDeck = function() {
@@ -217,30 +214,93 @@ var passOutCards = function() {
       player1.deck.push(deck[i]);
     }
   }
-  console.log(player2.deck);
-  console.log(player1.deck);
 };
 
-var playOneRound = function() {
-  console.log("Play 1 round of war where each player takes out a card to battle!");
+var playOneRound = function(start) {
+  // start = typeof start !== 'undefined' ? start : 0;
+  // console.log("Play 1 round of war where each player takes out a card to battle!");
   if (player1.deck[0].rank > player2.deck[0].rank) {
-    player1.score++;
+    player1.deck.push(player2.deck[0], player1.deck[0]);
+    player1.deck.shift();
+    player2.deck.shift();
+    console.log('p1 wins');
+    console.log('p1: ' + player1.deck.length);
+    console.log('p2: ' + player2.deck.length);
+    console.log('total: ' + (player1.deck.length + player2.deck.length));
   } else if (player2.deck[0].rank > player1.deck[0].rank) {
-    player2.score++;
+    player2.deck.push(player1.deck[0], player2.deck[0]);
+    player1.deck.shift();
+    player2.deck.shift();
+    console.log('p2 wins');
+    console.log('p1: ' + player1.deck.length);
+    console.log('p2: ' + player2.deck.length);
+    console.log('total: ' + (player1.deck.length + player2.deck.length));
+  } else if (player1.deck.length < 5) {
+    player1.deck.forEach(function(e,i,a) {
+      player2.deck.push(e);
+    });
+    player1.deck = [];
+    console.log('p2 wins');
+    console.log('p1: ' + player1.deck.length);
+    console.log('p2: ' + player2.deck.length);
+    console.log('total: ' + (player1.deck.length + player2.deck.length));
+  } else if (player2.deck.length < 5) {
+    player2.deck.forEach(function(e,i,a) {
+      player1.deck.push(e);
+    });
+    console.log('p1 wins');
+    console.log('p1: ' + player1.deck.length);
+    console.log('p2: ' + player2.deck.length);
+    console.log('total: ' + (player1.deck.length + player2.deck.length));
+    player2.deck = [];
+  } else if (player1.deck[4].rank > player2.deck[4].rank) {
+    console.log('tie - p1 wins');
+    // console.log(playerOneTieRange + "," + playerTwoTieRange);
+    player1.deck.push(player1.deck[0], player1.deck[1], player1.deck[2], player1.deck[3], player1.deck[4],  player2.deck[0], player2.deck[1], player2.deck[2], player2.deck[3], player2.deck[4]);
+    player1.deck.shift(); //0
+    player1.deck.shift(); //1
+    player1.deck.shift(); //2
+    player1.deck.shift(); //3
+    player1.deck.shift(); //4
+    player2.deck.shift(); //0
+    player2.deck.shift(); //1
+    player2.deck.shift(); //2
+    player2.deck.shift(); //3
+    player2.deck.shift(); //4
+    console.log('p1 wins');
+    console.log('p1: ' + player1.deck.length);
+    console.log('p2: ' + player2.deck.length);
+    console.log('total: ' + (player1.deck.length + player2.deck.length));
+  } else if (player2.deck[4].rank > player1.deck[4].rank) {
+    console.log('tie - p2 wins');
+    // console.log(playerTwoTieRange + "," + playerOneTieRange);
+    player2.deck.push(player2.deck[0], player2.deck[1], player2.deck[2], player2.deck[3], player2.deck[4], player1.deck[0], player1.deck[1], player1.deck[2], player1.deck[3], player1.deck[4]);
+    player2.deck.shift(); //0
+    player2.deck.shift(); //1
+    player2.deck.shift(); //2
+    player2.deck.shift(); //3
+    player2.deck.shift(); //4
+    player1.deck.shift(); //0
+    player1.deck.shift(); //1
+    player1.deck.shift(); //2
+    player1.deck.shift(); //3
+    player1.deck.shift(); //4
+    console.log('p2 wins');
+    console.log('p1: ' + player1.deck.length);
+    console.log('p2: ' + player2.deck.length);
+    console.log('total: ' + (player1.deck.length + player2.deck.length));
   } else {
-    tieCount++;
+    // playOneRound()
+    throw "break"
   }
-  player1.deck.shift();
-  player2.deck.shift();
   moveCount++;
 };
 
 var declareWinner = function() {
   console.log("Print out who the winner of the game is and how many moves it took to win.");
   console.log("Number of moves in this game: " + moveCount);
-  console.log("Player 1: " + player1.score);
-  console.log("Player 2: " + player2.score);
-  console.log("Number of ties: " + tieCount);
+  console.log("Player 1: " + player1.deck.length);
+  console.log("Player 2: " + player2.deck.length);
   if (player1.score > player2.score) {
     console.log("PLAYER 1 HAS WON OMFG");
   } else if (player2.score > player1.score) {
@@ -248,7 +308,7 @@ var declareWinner = function() {
   } else {
     console.log("DURR BE A TIE!");
   }
-  moveCount = 0; //reset movecount
+  // moveCount = 0; //reset movecount
 };
 
 // Main function that controls everything
