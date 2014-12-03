@@ -217,6 +217,11 @@ var passOutCards = function() {
 };
 
 var playOneRound = function(start) {
+  var logging = function() {
+    console.log('p1: ' + player1.deck.length);
+    console.log('p2: ' + player2.deck.length);
+    console.log('total: ' + (player1.deck.length + player2.deck.length));
+  }
   // start = typeof start !== 'undefined' ? start : 0;
   // console.log("Play 1 round of war where each player takes out a card to battle!");
   if (player1.deck[0].rank > player2.deck[0].rank) {
@@ -224,34 +229,26 @@ var playOneRound = function(start) {
     player1.deck.shift();
     player2.deck.shift();
     console.log('p1 wins');
-    console.log('p1: ' + player1.deck.length);
-    console.log('p2: ' + player2.deck.length);
-    console.log('total: ' + (player1.deck.length + player2.deck.length));
+    logging();
   } else if (player2.deck[0].rank > player1.deck[0].rank) {
     player2.deck.push(player1.deck[0], player2.deck[0]);
     player1.deck.shift();
     player2.deck.shift();
     console.log('p2 wins');
-    console.log('p1: ' + player1.deck.length);
-    console.log('p2: ' + player2.deck.length);
-    console.log('total: ' + (player1.deck.length + player2.deck.length));
+    logging();
   } else if (player1.deck.length < 5) {
     player1.deck.forEach(function(e,i,a) {
       player2.deck.push(e);
     });
     player1.deck = [];
     console.log('p2 wins');
-    console.log('p1: ' + player1.deck.length);
-    console.log('p2: ' + player2.deck.length);
-    console.log('total: ' + (player1.deck.length + player2.deck.length));
+    logging();
   } else if (player2.deck.length < 5) {
     player2.deck.forEach(function(e,i,a) {
       player1.deck.push(e);
     });
     console.log('p1 wins');
-    console.log('p1: ' + player1.deck.length);
-    console.log('p2: ' + player2.deck.length);
-    console.log('total: ' + (player1.deck.length + player2.deck.length));
+    logging();
     player2.deck = [];
   } else if (player1.deck[4].rank > player2.deck[4].rank) {
     console.log('tie - p1 wins');
@@ -268,9 +265,7 @@ var playOneRound = function(start) {
     player2.deck.shift(); //3
     player2.deck.shift(); //4
     console.log('p1 wins');
-    console.log('p1: ' + player1.deck.length);
-    console.log('p2: ' + player2.deck.length);
-    console.log('total: ' + (player1.deck.length + player2.deck.length));
+    logging();
   } else if (player2.deck[4].rank > player1.deck[4].rank) {
     console.log('tie - p2 wins');
     // console.log(playerTwoTieRange + "," + playerOneTieRange);
@@ -286,9 +281,7 @@ var playOneRound = function(start) {
     player1.deck.shift(); //3
     player1.deck.shift(); //4
     console.log('p2 wins');
-    console.log('p1: ' + player1.deck.length);
-    console.log('p2: ' + player2.deck.length);
-    console.log('total: ' + (player1.deck.length + player2.deck.length));
+    logging();
   } else {
     // playOneRound()
     throw "break"
@@ -301,7 +294,7 @@ var declareWinner = function() {
   console.log("Number of moves in this game: " + moveCount);
   console.log("Player 1: " + player1.deck.length);
   console.log("Player 2: " + player2.deck.length);
-  if (player1.score > player2.score) {
+  if (player) {
     console.log("PLAYER 1 HAS WON OMFG");
   } else if (player2.score > player1.score) {
     console.log("PLAYER 2 HAS WON-HOW U DOOZ DIZ?");
