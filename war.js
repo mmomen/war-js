@@ -294,12 +294,12 @@ var declareWinner = function() {
   console.log("Number of moves in this game: " + moveCount);
   console.log("Player 1: " + player1.deck.length);
   console.log("Player 2: " + player2.deck.length);
-  if (player) {
+  if (player2.deck.length === 0) {
     console.log("PLAYER 1 HAS WON OMFG");
-  } else if (player2.score > player1.score) {
+  } else if (player1.deck.length === 0) {
     console.log("PLAYER 2 HAS WON-HOW U DOOZ DIZ?");
   } else {
-    console.log("DURR BE A TIE!");
+    console.log("Unexpected scenario - debug");
   }
   // moveCount = 0; //reset movecount
 };
