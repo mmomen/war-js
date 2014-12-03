@@ -3,6 +3,7 @@ console.log("hi");
 // Data Structures declared here
 var deck = [];
 var moveCount = 0;
+var moveCountArr = [];
 
 var player1 = {
   deck: []
@@ -216,8 +217,9 @@ var passOutCards = function() {
   }
 };
 
-var playOneRound = function(start) {
-  // start = typeof start !== 'undefined' ? start : 0;
+var playOneRound = function(card) {
+  card = typeof card !== 'undefined' ? card : 0; //if card is set, keep it, otherwise make it 0
+  var cardPurgatory = [];
   // console.log("Play 1 round of war where each player takes out a card to battle!");
 
   var logging = function() {
@@ -238,46 +240,70 @@ var playOneRound = function(start) {
     player2.deck.shift(); //3
     player2.deck.shift(); //4
   };
+
+  var holdingCards = function(card) {
+    cardPurgatory.push(player1.deck[card], player1.deck[card+1], player1.deck[card+2], player1.deck[card+3], player1.deck[card+4],  player2.deck[card], player2.deck[card+1], player2.deck[card+2], player2.deck[card+3], player2.deck[card+4]);
+  };
+
+  var restoreCards = function(playerObj) {
+    cardPurgatory.forEach(function(e) {
+      playerObj.deck.push(e);
+    });
+    cardPurgatory = [];
+  };
+
+  var tie = function(card) {
+    console.log("card is " + card);
+    if (player1.deck.length < card+5) {
+      player1.deck.forEach(function(e) {
+        player2.deck.push(e);
+      });
+      restoreCards(player2);
+      player1.deck = [];
+      console.log('p1 didn\'t have enough cards');
+      logging();
+    } else if (player2.deck.length < card+5) {
+      player2.deck.forEach(function(e) {
+        player1.deck.push(e);
+      });
+      restoreCards(player1);
+      player2.deck = [];
+      console.log('p2 didn\'t have enough cards');
+      logging();
+    } else if (player1.deck[card+4].rank > player2.deck[card+4].rank) {
+      console.log('tie - p1 wins');
+      holdingCards(card);
+      restoreCards(player1);
+      tieDiscard();
+      logging();
+    } else if (player2.deck[card+4].rank > player1.deck[card+4].rank) {
+      console.log('tie - p2 wins');
+      holdingCards(card);
+      restoreCards(player2);
+      tieDiscard();
+      logging();
+    }  else {
+      holdingCards(card);
+      tieDiscard();
+      tie(card);
+    }
+  };
   
-  if (player1.deck[0].rank > player2.deck[0].rank) {
-    player1.deck.push(player2.deck[0], player1.deck[0]);
+  if (player1.deck[card].rank > player2.deck[card].rank) {
+    player1.deck.push(player2.deck[card], player1.deck[card]);
     player1.deck.shift();
     player2.deck.shift();
     console.log('p1 wins');
     logging();
-  } else if (player2.deck[0].rank > player1.deck[0].rank) {
-    player2.deck.push(player1.deck[0], player2.deck[0]);
+  } else if (player2.deck[card].rank > player1.deck[card].rank) {
+    player2.deck.push(player1.deck[card], player2.deck[card]);
     player1.deck.shift();
     player2.deck.shift();
     console.log('p2 wins');
     logging();
-  } else if (player1.deck.length < 5) {
-    player1.deck.forEach(function(e,i,a) {
-      player2.deck.push(e);
-    });
-    player1.deck = [];
-    console.log('p2 wins');
-    logging();
-  } else if (player2.deck.length < 5) {
-    player2.deck.forEach(function(e,i,a) {
-      player1.deck.push(e);
-    });
-    player2.deck = [];
-    console.log('p1 wins');
-    logging();
-  } else if (player1.deck[4].rank > player2.deck[4].rank) {
-    console.log('tie - p1 wins');
-    player1.deck.push(player1.deck[0], player1.deck[1], player1.deck[2], player1.deck[3], player1.deck[4],  player2.deck[0], player2.deck[1], player2.deck[2], player2.deck[3], player2.deck[4]);
-    tieDiscard();
-    logging();
-  } else if (player2.deck[4].rank > player1.deck[4].rank) {
-    console.log('tie - p2 wins');
-    player2.deck.push(player2.deck[0], player2.deck[1], player2.deck[2], player2.deck[3], player2.deck[4], player1.deck[0], player1.deck[1], player1.deck[2], player1.deck[3], player1.deck[4]);
-    tieDiscard();
-    logging();
-  } else {
-    // playOneRound()
-    throw "break";
+  }  else {
+    console.log("card is " + card);
+    tie(card); 
   }
   moveCount++;
 };
@@ -294,18 +320,36 @@ var declareWinner = function() {
   } else {
     console.log("Unexpected scenario - debug");
   }
+  moveCountArr.push(moveCount);
+  moveCount = 0;
 };
 
 // Main function that controls everything
-var countTotalMovesInWar = function() {
-  initializeDeck();
-  shuffleCards();
-  passOutCards();
-  while(player1.deck.length > 0 && player2.deck.length > 0) {
-    playOneRound();
+var countTotalMovesInWar = function(num) {
+  var games = 0;
+  while (games<num) {
+    initializeDeck();
+    shuffleCards();
+    passOutCards();
+    while(player1.deck.length > 0 && player2.deck.length > 0) {
+      playOneRound();
+    }
+    declareWinner();
+    games++;
   }
-  declareWinner();
 };
 
 // Execute main function
-countTotalMovesInWar();
+countTotalMovesInWar(100);
+var sum = 0;
+for(var x = 0; x < moveCountArr.length; x++){
+  sum += moveCountArr[x];
+}
+
+var average = sum / moveCountArr.length;
+var min = Math.min.apply(null, moveCountArr);
+var max = Math.max.apply(null, moveCountArr);
+
+console.log("Games played: " + moveCountArr.length);
+console.log("Average turns per game: " + average);
+console.log("Min: " + min + " ||| Max: " + max);
