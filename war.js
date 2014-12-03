@@ -223,12 +223,32 @@ var passOutCards = function() {
 
 var playOneRound = function() {
   console.log("Play 1 round of war where each player takes out a card to battle!");
+  if (player1.deck[0].rank > player2.deck[0].rank) {
+    player1.score++;
+  } else if (player2.deck[0].rank > player1.deck[0].rank) {
+    player2.score++;
+  } else {
+    tieCount++;
+  }
+  player1.deck.shift();
+  player2.deck.shift();
+  moveCount++;
 };
 
 var declareWinner = function() {
   console.log("Print out who the winner of the game is and how many moves it took to win.");
-  console.log("Move count: " + moveCount);
-  moveCount = 0;
+  console.log("Number of moves in this game: " + moveCount);
+  console.log("Player 1: " + player1.score);
+  console.log("Player 2: " + player2.score);
+  console.log("Number of ties: " + tieCount);
+  if (player1.score > player2.score) {
+    console.log("PLAYER 1 HAS WON OMFG");
+  } else if (player2.score > player1.score) {
+    console.log("PLAYER 2 HAS WON-HOW U DOOZ DIZ?");
+  } else {
+    console.log("DURR BE A TIE!");
+  }
+  moveCount = 0; //reset movecount
 };
 
 // Main function that controls everything
