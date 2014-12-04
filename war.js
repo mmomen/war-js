@@ -1,5 +1,3 @@
-console.log("hi");
-
 // Data Structures declared here
 var deck = [];
 var moveCount = 0;
@@ -203,7 +201,6 @@ var shuffleCards = function() {
     return array;
   };
   shuffle(deck);
-  // console.log(deck);
 };
 
 var passOutCards = function() {
