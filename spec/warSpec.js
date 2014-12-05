@@ -1,69 +1,96 @@
-var War = require('../war2.js');
+var War = require('../war');
 
-var card1 = {
-  rank: 14,
-  suit: "clubs"
-};
-var card2 = {
-  rank: 10,
-  suit: "diamonds"
-};
+describe("War", function(){
+  var war;
 
-describe("deck", function() {
-  it("is an empty array", function() {
-    War.init();
-    expect(War.gameStatus.deck).toEqual([]);
+  beforeEach(function() {
+    war = new War();
   });
 
-  it("initalizes with 52 cards", function() {
-    War.init();
-    War.initializeDeck();
-    expect(War.gameStatus.deck.length).toEqual(52);
-    expect(War.gameStatus.deck).toContain(card1);
-    expect(War.gameStatus.deck).toContain(card2);
+  it("is created with a deck and 2 players", function() {
+    expect(war.deck.length).toEqual(0);
+    expect(war.player1).not.toBeUndefined();
+    expect(war.player2).not.toBeUndefined();
   });
 
-  it("shuffles the deck", function() {
-    War.init();
-    War.initializeDeck();
-    var origDeck = War.gameStatus.deck.slice(0,52); //save the original deck
-    War.shuffleCards(War.gameStatus.deck); //shuffle it
-    expect(origDeck).toNotEqual(War.gameStatus.deck); //orig should not be equal to live
-    expect(War.gameStatus.deck.length).toEqual(52); //ensure 52 still exist
+  describe("deck is initialized", function() {
+    beforeEach(function() {
+      war.initializeDeck();
+    });
+
+    it("has 52 cards", function() {
+      expect(war.deck.length).toEqual(52);
+    });
+
+    it("initializes with different cards", function() {
+      var card1 = {
+        suit: "Hearts",
+        rank: "J"
+      };
+      var card2 = {
+        suit: "Spades",
+        rank: 10
+      };
+
+      expect(war.deck).toContain(card1);
+      expect(war.deck).toContain(card2);
+    });
+
+    describe("cards are passed out", function() {
+      beforeEach(function() {
+        war.passOutCards();
+      });
+
+      it("passes out 26 cards to each player", function() {
+        expect(war.player1.deck.length).toEqual(26);
+        expect(war.player2.deck.length).toEqual(26);
+      });
+
+      it("empties out existing deck", function() {
+        expect(war.deck.length).toEqual(0);
+      });
+
+      describe("play one round", function() {
+        describe("player 1 wins", function() {
+          beforeEach(function() {
+            war.player1.deck = [
+              {rank: 5, suit: "Diamonds"},
+              {rank: 8, suit: "Spades"}
+            ];
+            war.player2.deck = [
+              {rank: 6, suit: "Diamonds"},
+              {rank: 10, suit: "Hearts"}
+            ];
+            war.playOneRound();
+          });
+          
+          it("adds a card to the winner", function() {
+            expect(war.player1.deck.length).toEqual(1);
+            expect(war.player2.deck.length).toEqual(3);
+            expect(war.player2.deck).toContain({rank: 6, suit: "Diamonds"});
+            expect(war.player2.deck).toContain({rank: 10, suit: "Hearts"});
+            expect(war.player2.deck).toContain({rank: 5, suit: "Diamonds"});
+            expect(war.player1.deck).toContain({rank: 8, suit: "Spades"});
+          });
+
+          it("adds the card to the end of the deck", function() {
+            expect(war.player1.deck[0]).toEqual({rank: 8, suit: "Spades"});
+            expect(war.player2.deck[0]).toEqual({rank: 10, suit: "Hearts"});
+          });
+        });
+      });
+
+      describe("play game", function() {
+        beforeEach(function() {
+          war.passOutCards();
+          war.playGame();
+        });
+
+        it("ends with all cards belonging to 1 player", function() {
+          expect(war.player1.deck.length + war.player2.deck.length).toEqual(52);
+          expect(war.player1.deck.length * war.player2.deck.length).toEqual(0);
+        });
+      });
+    });
   });
-
-  it("passes out cards", function() {
-    War.init();
-    War.initializeDeck();
-    War.shuffleCards(War.gameStatus.deck);
-    War.passOutCards();
-    expect(War.gameStatus.player1.deck.length).toEqual(26);
-    expect(War.gameStatus.player2.deck.length).toEqual(26);
-    // expect(gameStatus.player1.deck).toNotEqual(gameStatus.player2.deck);
-  });
-
-  it("plays one move", function() {
-    War.init();
-    War.initializeDeck();
-    War.shuffleCards(War.gameStatus.deck);
-    War.passOutCards();
-    var previousMoveCount = War.gameStatus.moveCount
-    War.playOneRound();
-    expect(War.gameStatus.moveCount).toEqual(previousMoveCount + 1);
-    expect(War.gameStatus.player1.deck.length).toNotEqual(26);
-    expect(War.gameStatus.player2.deck.length).toNotEqual(26);
-  })
-//create situation to force and test a tie, and a super tie
-  
-  it("declares the winner of the game", function() {
-    War.init();
-    War.initializeDeck();
-    War.shuffleCards(War.gameStatus.deck);
-    War.passOutCards();
-    // War.playOneRound ();
-    //configure setup for winner
-    
-    War.declareWinner();
-  })
-
 });
